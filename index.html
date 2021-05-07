@@ -1,17 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+</head>
 <body>
-
-<p id="demo">Clique no botão para mudar o layout deste parágrafo</p>
-
-<button onclick="myFunction()">Click Me!</button>
+<p>
+  ID:
+  <input id="id" type="text" />
+</p>
+<br />
+<button onclick="myFunction()">Recuperar Personagem</button>
+<pre id="demo"></pre>
 
 <script>
-function myFunction() {
-  var x = document.getElementById("demo");
-  x.style.fontSize = "25px"; 
-  x.style.color = "green"; 
-}
+  function myFunction() {
+    let id = Number(document.getElementById("id").value);
+    if (isNaN(id) || id <= 0) {
+      alert("Digite um ID numérico positivo!");
+      return;
+    }
+    fetch(`https://swapi.dev/api/people/${id}/`)
+      .then(res => res.json())
+      .then(data => {
+        let x = document.getElementById("demo");
+        if (data.detail === "Not found") {
+          x.innerHTML = "";
+          alert("Personagem não encontrado, tente um ID menor!");
+          return;
+        }
+        x.innerHTML = `Nome do Personagem: ${data.name}`;
+        x.style.fontSize = "25px"; 
+        x.style.color = "green"; 
+      })
+      .catch(err => {
+        alert("Personagem não encontrado, tente um ID menor!");
+      })
+
+
+  }
+
 </script>
 
 </body>
