@@ -2,6 +2,16 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
+  <script src="https://unpkg.com/qs@6.10.1/lib/index.js"></script>
+  <script>
+    Parse.serverURL = 'https://parseapi.back4app.com'; // This is your Server URL
+    Parse.initialize(
+      'Fqf5B44csnbRHVfb4sLu339IwVX8f5WKjCW2Uz4H', // This is your Application ID
+      'TsIEm7ROF5noPvbZp9Du1XpNRwuaS5OQO7ES4Sac' // This is your Javascript key
+    );
+  </script>
 </head>
 <body>
 <p>
@@ -9,19 +19,102 @@
   <input id="id" type="text" />
 </p>
 <br />
-<button onclick="myFunction()">Recuperar Personagem</button>
+<button onclick="myFunctionBack4App()">Recuperar Personagem</button>
 <pre id="demo"></pre>
+<pre id="demo2"></pre>
 
 <script>
-  function myFunction() {
+  // const axios = require('axios');
+
+  function myFunctionBack4App() {
+    let x = document.getElementById("demo");
+    let y = document.getElementById("demo2");
+    let id = Number(document.getElementById("id").value);
+    if (isNaN(id) || id <= 0) {
+      alert("Digite um ID numérico positivo!");
+      return;
+    }
+
+    const Pessoa = Parse.Object.extend('Pessoa');
+    const query = new Parse.Query(Pessoa);
+    query.equalTo("idStarWars", id.toString());
+    query.find().then((results) => {
+      console.log('results', results);
+      if (results && results.length == 1) {
+        const name = results[0].get("name");
+        const height = results[0].get("height");
+        x.innerHTML = `Nome do Personagem: ${name}`;
+        y.innerHTML = `Altura do Personagem: ${height} cm`;
+      } else {
+        alert('Erro, vários personagens com o mesmo ID!');
+      }
+    }, (error) => {
+      alert(`Error while fetching Pessoa: ${JSON.stringify(error)}`);
+      console.error('Error while fetching Pessoa', error);
+    });
+  }
+
+  function myFunctionBack4AppRestAPI() {
+    let id = Number(document.getElementById("id").value);
+    if (isNaN(id) || id <= 0) {
+      alert("Digite um ID numérico positivo!");
+      return;
+    }
+    axios({
+      method: "get",
+      url: "https://parseapi.back4app.com/classes/Pessoa",
+      data: { where: { idStarWars: id} },
+      headers: { 
+        "X-Parse-Application-Id": "Fqf5B44csnbRHVfb4sLu339IwVX8f5WKjCW2Uz4H",
+        "X-Parse-REST-API-Key": "jB37Yped8yKH5s9t1vZwdbQ5IPU5vb4i4LUeBktf",
+        "content-type": "application/x-www-form-urlencoded;charset=utf-8",
+      },
+    })
+      .then(function (response) {
+        // handle success
+        console.log(response);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log('ERROR: ', error);
+      });
+
+
+    // fetch(`https://swapi.dev/api/people/${id}/`)
+    //   .then(res => {
+    //     console.log(res);
+    //     return res.json();
+    //   })
+    //   .then(data => {
+    //     console.log(data);
+    //     let x = document.getElementById("demo");
+    //     if (data.detail === "Not found") {
+    //       x.innerHTML = "";
+    //       alert("Personagem não encontrado, tente um ID menor!");
+    //       return;
+    //     }
+    //     x.innerHTML = `Nome do Personagem: ${data.name}`;
+    //     x.style.fontSize = "25px"; 
+    //     x.style.color = "green"; 
+    //   })
+    //   .catch(err => {
+    //     alert("Personagem não encontrado, tente um ID menor!");
+    //   })
+  }
+
+  function myFunctionStarWarsAPI() {
     let id = Number(document.getElementById("id").value);
     if (isNaN(id) || id <= 0) {
       alert("Digite um ID numérico positivo!");
       return;
     }
     fetch(`https://swapi.dev/api/people/${id}/`)
-      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        return res.json();
+      })
       .then(data => {
+        console.log(data);
         let x = document.getElementById("demo");
         if (data.detail === "Not found") {
           x.innerHTML = "";
@@ -35,8 +128,6 @@
       .catch(err => {
         alert("Personagem não encontrado, tente um ID menor!");
       })
-
-
   }
 
 </script>
