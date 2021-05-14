@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js"></script>
   <script>
     Parse.serverURL = 'https://parseapi.back4app.com'; // This is your Server URL
     Parse.initialize(
@@ -19,10 +18,12 @@
   <input id="id" type="text" />
 </p>
 <br />
-<button onclick="myFunctionBack4AppRestAPI()">Recuperar Personagem</button>
+<button onclick="myFunctionBack4App()">Recuperar Personagem</button>
 <pre id="demo"></pre>
 <pre id="demo2"></pre>
-
+<h5>
+  <a href="escrever.html">Próxima Página</a>
+</h5>
 <script>
   // const axios = require('axios');
 
@@ -38,15 +39,14 @@
     const Pessoa = Parse.Object.extend('Pessoa');
     const query = new Parse.Query(Pessoa);
     query.equalTo("idStarWars", id.toString());
-    query.find().then((results) => {
-      console.log('results', results);
-      if (results && results.length == 1) {
-        const name = results[0].get("name");
-        const height = results[0].get("height");
-        x.innerHTML = `Nome do Personagem: ${name}`;
-        y.innerHTML = `Altura do Personagem: ${height} cm`;
+    query.first().then((result) => {
+      console.log('result', result);
+      if (result) {
+        const pessoa = result.toJSON();
+        x.innerHTML = `Nome do Personagem: ${pessoa.name}`;
+        y.innerHTML = `Altura do Personagem: ${pessoa.height} cm`;
       } else {
-        alert('Erro, vários personagens com o mesmo ID!');
+        alert('Não existe nenhum personagem com este ID, tente um ID menor!');
       }
     }, (error) => {
       alert(`Error while fetching Pessoa: ${JSON.stringify(error)}`);

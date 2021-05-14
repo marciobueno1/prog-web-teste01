@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
+  <script>
+    Parse.serverURL = 'https://parseapi.back4app.com'; // This is your Server URL
+    Parse.initialize(
+      'Fqf5B44csnbRHVfb4sLu339IwVX8f5WKjCW2Uz4H', // This is your Application ID
+      'TsIEm7ROF5noPvbZp9Du1XpNRwuaS5OQO7ES4Sac' // This is your Javascript key
+    );
+  </script>
+</head>
+<body>
+<p>
+  ID:
+  <input id="id" type="text" />
+</p>
+<br />
+<button onclick="readObject()">Recuperar Personagem</button>
+<p>
+    Name:
+    <input id="name" type="text" />
+</p>
+<button onclick="saveObject()">Salvar Personagem</button>
+<h5>
+    <a href="index.html">Página Anterior</a>
+</h5>
+    
+<script>
+  let inputName = document.getElementById("name");
+  let pessoa = null;
+
+  function readObject() {
+    let id = Number(document.getElementById("id").value);
+    if (isNaN(id) || id <= 0) {
+      alert("Digite um ID numérico positivo!");
+      return;
+    }
+
+    const Pessoa = Parse.Object.extend('Pessoa');
+    const query = new Parse.Query(Pessoa);
+    query.equalTo("idStarWars", id.toString());
+    query.first().then((result) => {
+      if (result) {
+        pessoa = result;
+        inputName.value = pessoa.get("name");
+      } else {
+        alert('Não existe nenhum personagem com este ID, tente um ID menor!');
+      }
+    }, (error) => {
+      alert('Erro ao fazer a consulta ao servidor!');
+    });
+  }
+
+  function saveObject() {
+      if (pessoa) {
+          if (inputName.value) {
+              pessoa.set('name', inputName.value);
+              pessoa.save().then((response) => {
+                  alert('Pernagem salvo!');
+              }, (error) => {
+                  alert('Erro ao salvar o personagem');
+              });
+          } else {
+              alert('Digite o novo nome do personagem!');
+          }
+
+      } else {
+          alert('Primeiro busque pelo personagem.');
+      }
+  }
+
+
+</script>
+
+</body>
+</html>
