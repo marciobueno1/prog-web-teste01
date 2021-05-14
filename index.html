@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
-  <script src="https://unpkg.com/qs@6.10.1/lib/index.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js"></script>
   <script>
     Parse.serverURL = 'https://parseapi.back4app.com'; // This is your Server URL
     Parse.initialize(
@@ -19,7 +19,7 @@
   <input id="id" type="text" />
 </p>
 <br />
-<button onclick="myFunctionBack4App()">Recuperar Personagem</button>
+<button onclick="myFunctionBack4AppRestAPI()">Recuperar Personagem</button>
 <pre id="demo"></pre>
 <pre id="demo2"></pre>
 
@@ -55,6 +55,8 @@
   }
 
   function myFunctionBack4AppRestAPI() {
+    let x = document.getElementById("demo");
+    let y = document.getElementById("demo2");
     let id = Number(document.getElementById("id").value);
     if (isNaN(id) || id <= 0) {
       alert("Digite um ID numérico positivo!");
@@ -62,8 +64,7 @@
     }
     axios({
       method: "get",
-      url: "https://parseapi.back4app.com/classes/Pessoa",
-      data: { where: { idStarWars: id} },
+      url: `https://parseapi.back4app.com/classes/Pessoa?where={"idStarWars":"${id}"}`,
       headers: { 
         "X-Parse-Application-Id": "Fqf5B44csnbRHVfb4sLu339IwVX8f5WKjCW2Uz4H",
         "X-Parse-REST-API-Key": "jB37Yped8yKH5s9t1vZwdbQ5IPU5vb4i4LUeBktf",
@@ -71,12 +72,18 @@
       },
     })
       .then(function (response) {
-        // handle success
-        console.log(response);
+        if (response.data.results && response.data.results.length > 0) {
+          let pessoa = response.data.results[0];
+          console.log('pessoa', pessoa);
+          x.innerHTML = `Nome do Personagem: ${pessoa.name}`;
+          y.innerHTML = `Altura do Personagem: ${pessoa.height} cm`;
+        } else {
+          alert('Não existe nenhum personagem com este ID, tente um ID menor!');
+        }
       })
       .catch(function (error) {
         // handle error
-        console.log('ERROR: ', error);
+        alert('ERROR: ' + error);
       });
 
 
