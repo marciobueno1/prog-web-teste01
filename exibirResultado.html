@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+<p>
+    ID:
+    <input id="id" type="number" readonly />
+</p>
+<p>
+    NOME:
+    <input id="name" type="text" readonly />
+</p>
+<p>
+    ALTURA:
+    <input id="height" type="number" readonly />
+</p>
+
+  <br />
+<h5>
+    <a href="index.html">Página Inicial</a>
+</h5>
+<h5>
+    <a href="novoPersonagem.html">Novo Personagem</a>
+</h5>
+    
+<script>
+  let inputId = document.getElementById("id");
+  let inputName = document.getElementById("name");
+  let inputHeight = document.getElementById("height");
+
+  if (localStorage.error) {
+      alert(`Erro: ${localStorage.error}`);
+  } else if (localStorage.resultado) {
+      let resultado = JSON.parse(localStorage.resultado);
+      inputId.value = resultado.idStarWars;
+      inputName.value = resultado.name;
+      inputHeight.value = resultado.height;
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/parse/dist/parse.min.js"></script>
+  <script>
+    Parse.serverURL = 'https://parseapi.back4app.com'; // This is your Server URL
+    Parse.initialize(
+      'Fqf5B44csnbRHVfb4sLu339IwVX8f5WKjCW2Uz4H', // This is your Application ID
+      'TsIEm7ROF5noPvbZp9Du1XpNRwuaS5OQO7ES4Sac' // This is your Javascript key
+    );
+  </script>
+</head>
+<body>
+<p>
+    ID:
+    <input id="id" type="number" />
+</p>
+<p>
+    NOME:
+    <input id="name" type="text" />
+</p>
+<p>
+    ALTURA:
+    <input id="height" type="number" />
+</p>
+
+  <br />
+<button onclick="saveObject()">Salvar Personagem</button>
+<h5>
+    <a href="index.html">Página Inicial</a>
+</h5>
+<h5>
+    <a href="exibirResultado.html">Exibir Resultado</a>
+</h5>
+<br />
+<br />
+<p>Resultado: </p>
+<pre id="resultado"></pre>
+    
+<script>
+  let inputId = document.getElementById("id");
+  let inputName = document.getElementById("name");
+  let inputHeight = document.getElementById("height");
+  let resultado = document.getElementById("resultado");
+
+  function saveObject() {
+      localStorage.removeItem('error');
+      let id = parseInt(inputId.value)
+      if (isNaN(id) || id <= 0) {
+          alert('Digite um id válido. Inteiros maiores que zero!');
+          return;
+      }
+
+      if (!inputName.value) {
+          alert('Digite o nome do personagem!');
+          return;
+      }
+
+      let altura = parseInt(inputHeight.value)
+      if (isNaN(altura) || altura <= 0) {
+          alert('Digite uma altura válida. Inteiros maiores que zero!');
+          return;
+      }
+
+    const Pessoa = Parse.Object.extend('Pessoa');
+    const myNewObject = new Pessoa();
+
+    myNewObject.set('name', inputName.value);
+    myNewObject.set('height', altura.toString());
+    myNewObject.set('idStarWars', id.toString());
+
+    myNewObject.save().then(
+        (result) => {
+            localStorage.resultado = JSON.stringify(result);
+            resultado.innerHTML = `Pessoa criada: ${JSON.stringify(result)}`;
+            window.location.assign('exibirResultado.html');
+        },
+        (error) => {
+            localStorage.error = JSON.stringify(error);
+            resultado.innerHTML = `Error while creating Pessoa: ${JSON.stringify(error)}`;
+        }
+    );  
+}
+
+
+</script>
+
+</body>
+</html>
